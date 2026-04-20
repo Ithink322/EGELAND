@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { studentsApi } from "../api/studentsApi";
 import type { Student, StudentStatus } from "../types/students";
 import { formatDate } from "../utils/date";
 import { StatusBadge } from "./StatusBadge";
+import { InfoGrid } from "./uiKit/InfoGrid";
+import { PanelHero } from "./uiKit/PanelHero";
 
 interface StudentDetailViewProps {
   studentId: string;
@@ -59,6 +61,19 @@ export const StudentDetailView = ({
     };
   }, [studentId]);
 
+  const infoItems = useMemo(
+    () =>
+      student
+        ? [
+            { label: "Телефон", value: student.phone },
+            { label: "Курс", value: student.course },
+            { label: "Дата регистрации", value: formatDate(student.registeredAt) },
+            { label: "Домашних выполнено", value: student.completedHomeworkCount },
+          ]
+        : [],
+    [student],
+  );
+
   const handleSave = async () => {
     if (!student) {
       return;
@@ -99,34 +114,14 @@ export const StudentDetailView = ({
 
   return (
     <div className="detail-stack">
-      <section className="detail-section detail-section--hero">
-        <div>
-          <p className="eyebrow">Карточка ученика</p>
-          <h4>{student.name}</h4>
-          <p className="muted">{student.email}</p>
-        </div>
+      <PanelHero
+        aside={<StatusBadge status={student.status} />}
+        description={student.email}
+        eyebrow="Карточка ученика"
+        title={student.name}
+      />
 
-        <StatusBadge status={student.status} />
-      </section>
-
-      <section className="detail-section info-grid">
-        <div>
-          <span className="detail-label">Телефон</span>
-          <strong>{student.phone}</strong>
-        </div>
-        <div>
-          <span className="detail-label">Курс</span>
-          <strong>{student.course}</strong>
-        </div>
-        <div>
-          <span className="detail-label">Дата регистрации</span>
-          <strong>{formatDate(student.registeredAt)}</strong>
-        </div>
-        <div>
-          <span className="detail-label">Домашних выполнено</span>
-          <strong>{student.completedHomeworkCount}</strong>
-        </div>
-      </section>
+      <InfoGrid items={infoItems} />
 
       <section className="detail-section detail-section--editable">
         <label className="field">

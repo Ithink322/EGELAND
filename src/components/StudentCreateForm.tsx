@@ -3,6 +3,7 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { COURSE_OPTIONS } from "../data/mockStudents";
 import type { CreateStudentInput, Student } from "../types/students";
+import { PanelHero } from "./uiKit/PanelHero";
 
 interface StudentCreateFormProps {
   onCreate: (input: CreateStudentInput) => Promise<Student>;
@@ -80,10 +81,7 @@ export const StudentCreateForm = ({
     [values],
   );
 
-  const updateField = <K extends keyof CreateStudentInput>(
-    field: K,
-    value: CreateStudentInput[K],
-  ) => {
+  const updateField = <K extends keyof CreateStudentInput>(field: K, value: CreateStudentInput[K]) => {
     setValues((currentValues) => ({ ...currentValues, [field]: value }));
     setErrors((currentErrors) => ({ ...currentErrors, [field]: undefined }));
   };
@@ -120,21 +118,16 @@ export const StudentCreateForm = ({
 
   return (
     <form className="detail-stack" onSubmit={handleSubmit}>
-      <section className="detail-section detail-section--hero">
-        <div>
-          <p className="eyebrow">Новый ученик</p>
-          <h4>Создание карточки</h4>
-          <p className="muted">
-            После создания ученик сразу появится в общем списке.
-          </p>
-        </div>
-
-        <span
-          className={`draft-indicator ${isFormDirty ? "draft-indicator--active" : ""}`}
-        >
-          {isFormDirty ? "Черновик" : "Новый"}
-        </span>
-      </section>
+      <PanelHero
+        aside={
+          <span className={`draft-indicator ${isFormDirty ? "draft-indicator--active" : ""}`}>
+            {isFormDirty ? "Черновик" : "Новый"}
+          </span>
+        }
+        description="После создания ученик сразу появится в общем списке."
+        eyebrow="Новый ученик"
+        title="Создание карточки"
+      />
 
       <section className="detail-section form-grid">
         <label className="field">
@@ -144,9 +137,7 @@ export const StudentCreateForm = ({
             onChange={(event) => updateField("name", event.target.value)}
             placeholder="Анна Смирнова"
           />
-          {errors.name ? (
-            <small className="field-error">{errors.name}</small>
-          ) : null}
+          {errors.name ? <small className="field-error">{errors.name}</small> : null}
         </label>
 
         <label className="field">
@@ -157,9 +148,7 @@ export const StudentCreateForm = ({
             placeholder="student@example.com"
             type="email"
           />
-          {errors.email ? (
-            <small className="field-error">{errors.email}</small>
-          ) : null}
+          {errors.email ? <small className="field-error">{errors.email}</small> : null}
         </label>
 
         <label className="field phone-field">
@@ -181,9 +170,7 @@ export const StudentCreateForm = ({
             specialLabel=""
             value={values.phone}
           />
-          {errors.phone ? (
-            <small className="field-error">{errors.phone}</small>
-          ) : null}
+          {errors.phone ? <small className="field-error">{errors.phone}</small> : null}
         </label>
 
         <label className="field">
@@ -199,9 +186,7 @@ export const StudentCreateForm = ({
               </option>
             ))}
           </select>
-          {errors.course ? (
-            <small className="field-error">{errors.course}</small>
-          ) : null}
+          {errors.course ? <small className="field-error">{errors.course}</small> : null}
         </label>
 
         <label className="field">
@@ -209,26 +194,17 @@ export const StudentCreateForm = ({
           <select
             value={values.status}
             onChange={(event) =>
-              updateField(
-                "status",
-                event.target.value as CreateStudentInput["status"],
-              )
+              updateField("status", event.target.value as CreateStudentInput["status"])
             }
           >
             <option value="active">Активный</option>
             <option value="excluded">Исключен</option>
           </select>
-          {errors.status ? (
-            <small className="field-error">{errors.status}</small>
-          ) : null}
+          {errors.status ? <small className="field-error">{errors.status}</small> : null}
         </label>
       </section>
 
-      {submitError ? (
-        <div className="inline-message inline-message--error">
-          {submitError}
-        </div>
-      ) : null}
+      {submitError ? <div className="inline-message inline-message--error">{submitError}</div> : null}
 
       <button className="primary-button" disabled={isSubmitting} type="submit">
         {isSubmitting ? "Создаем..." : "Создать ученика"}
